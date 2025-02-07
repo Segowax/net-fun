@@ -1,6 +1,4 @@
-using Azure.Core;
 using Azure.Identity;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +12,12 @@ builder.Configuration.AddAzureAppConfiguration(options =>
         new Uri(builder.Configuration["AppConfig:Endpoint"] ?? throw new ArgumentNullException("AppConfig:Endpoint")),
         new ManagedIdentityCredential()));
 #endif
+builder.Services.AddAzureAppConfiguration();
 
 // Add Application Insights telemetry collection.
 builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddControllers();
-builder.Services.AddAzureAppConfiguration();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
