@@ -5,13 +5,13 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
 #if DEBUG
-    var conn = builder.Configuration.GetSection("AzureAppConfigurationConnectionString");
+    var conn = builder.Configuration["AzureAppConfigurationConnectionString"] ?? throw new ArgumentNullException("AzureAppConfigurationConnectionString");
     builder.Configuration.AddAzureAppConfiguration(
-        cfg => cfg.Connect(conn.Value));
+        options => options.Connect(conn));
 #else
 builder.Configuration.AddAzureAppConfiguration(options =>
     options.Connect(
-        new Uri(builder.Configuration["AppConfig:Endpoint"] ?? throw new ArgumentNullException("AppConfig:Endpoint")),
+        new Uri(builder.Configuration["AppConfig"] ?? throw new ArgumentNullException("AppConfig")),
         new ManagedIdentityCredential()));
 #endif
     builder.Services.AddAzureAppConfiguration();
