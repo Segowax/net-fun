@@ -15,6 +15,9 @@ builder.Configuration.AddAzureAppConfiguration(options =>
         new ManagedIdentityCredential()));
 #endif
 
+// Add Application Insights telemetry collection.
+builder.Services.AddApplicationInsightsTelemetry();
+
 builder.Services.AddControllers();
 builder.Services.AddAzureAppConfiguration();
 
