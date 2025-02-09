@@ -1,4 +1,5 @@
-using AzureConfigurations;
+using AzureConfigurations.AppConfigurations;
+using AzureConfigurations.AppInsights;
 
 try
 {
@@ -7,7 +8,7 @@ try
     builder.Configuration.AddMyAzureAppConfigurations(builder.Configuration);
 
     builder.Services.RegisterMyAzureAppConfigurations();
-    builder.Services.RegisterMyAppInsightsConfigurations();
+    builder.Services.RegisterMyAppInsightsConfigurations("API");
 
     builder.Services.AddControllers();
 

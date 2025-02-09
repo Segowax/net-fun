@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AzureConfigurations
+namespace AzureConfigurations.AppConfigurations
 {
     public static class AzureAppConfigurations
     {
