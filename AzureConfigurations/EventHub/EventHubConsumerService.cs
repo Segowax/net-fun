@@ -31,7 +31,7 @@ namespace AzureConfigurations.EventHub
                     EventHubConsumerClient.DefaultConsumerGroupName,
                     _eventHubNamespace,
                     _eventHubName,
-                    new ManagedIdentityCredential());
+                    new DefaultAzureCredential(Credential.Options));
 
                 return base.StartAsync(cancellationToken);
             }

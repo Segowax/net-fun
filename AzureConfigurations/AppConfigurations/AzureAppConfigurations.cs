@@ -9,16 +9,11 @@ namespace AzureConfigurations.AppConfigurations
         public static IConfigurationBuilder AddMyAzureAppConfigurations
             (this IConfigurationBuilder configurationBuilder, IConfiguration configuration)
         {
-#if DEBUG
-            var conn = configuration["AzureAppConfigurationConnectionString"] ??
-                throw new ArgumentNullException("AzureAppConfigurationConnectionString");
-            configurationBuilder.AddAzureAppConfiguration(options => options.Connect(conn));
-#else
             configurationBuilder.AddAzureAppConfiguration(options =>
                 options.Connect(
-                    new Uri(configuration["AppConfig"] ?? throw new ArgumentNullException("AppConfig")),
-                    new ManagedIdentityCredential()));
-#endif
+                    new Uri(configuration["AppConfig"]
+                        ?? throw new ArgumentNullException("AppConfig")),
+                    new DefaultAzureCredential(Credential.Options)));
 
             return configurationBuilder;
         }
