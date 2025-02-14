@@ -1,9 +1,9 @@
 ﻿namespace Repository.Repositories.Interfaces
 {
-    public interface IBaseRepository<Entity> where Entity : class
+    public interface IBaseRepository<TEntity> where TEntity : class
     {
-        Task<IEnumerable<Entity>> GetAllAsync();
-        Task<Entity?> GetByIdAsync(int id);
-        Task<Entity?> GetByNameAsync(string name);
+        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<TEntity?> GetByIdAsync(int id);
+        Task<TEntity?> GetByNameAsync(string name);
     }
 }
