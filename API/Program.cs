@@ -2,12 +2,15 @@ using Application.IoC;
 using AzureConfigurations.AppConfigurations;
 using AzureConfigurations.AppInsights;
 using AzureConfigurations.EventHub;
+using Microsoft.EntityFrameworkCore;
+using Repository.Context;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Configuration.AddMyAzureAppConfigurations(builder.Configuration);
+    builder.Configuration.AddJsonFile($"appsettings.Development.json", optional: true, reloadOnChange: true);
 
     builder.Services.RegisterMyAzureAppConfigurations();
     builder.Services.RegisterMyAppInsightsConfigurations("API");
@@ -32,9 +35,13 @@ try
 
     app.MapControllers();
 
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<SensorContext>();
+        await context.Database.MigrateAsync();
+    }
+
     app.Run();
-
-
 }
 catch (Exception ex)
 {
