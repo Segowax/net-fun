@@ -1,10 +1,10 @@
-﻿namespace Domain
+﻿namespace Domain.Entities
 {
-    public class Sensor
+    public class SensorData
     {
         public int PropertyId { get; set; }
         public required string Name { get; set; }
-        public required object Value { get; set; }
+        public required string Value { get; set; }
         public DateTime MeasurementTime { get; set; }
         public DateTime EnqueuedTime { get; set; }
     }

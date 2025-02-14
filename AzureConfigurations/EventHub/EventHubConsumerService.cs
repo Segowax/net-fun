@@ -43,6 +43,15 @@ namespace AzureConfigurations.EventHub
             }
         }
 
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            if (_consumerClient != null)
+            {
+                await _consumerClient.DisposeAsync();
+            }
+            await base.StopAsync(cancellationToken);
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
