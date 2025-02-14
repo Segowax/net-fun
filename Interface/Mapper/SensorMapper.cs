@@ -5,7 +5,7 @@ namespace Interface.Mapper
 {
     public static class SensorMapper
     {
-        public static SensorDataDTO MapSensorDataToDto(this SensorData sensorData) =>
+        public static SensorDataDto MapSensorDataToDto(this SensorData sensorData) =>
             new()
             {
                 EnqueuedTime = sensorData.EnqueuedTime,

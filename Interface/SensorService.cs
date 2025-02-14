@@ -13,7 +13,7 @@ namespace Interface
             _sensorRepository = sensorRepository;
         }
 
-        public async Task<IEnumerable<SensorDataDTO>> GetAllSensorData()
+        public async Task<IEnumerable<SensorDataDto>> GetAllSensorData()
         {
             var result = await _sensorRepository.GetAllAsync();
 

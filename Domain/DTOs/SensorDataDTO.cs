@@ -1,6 +1,6 @@
 ﻿namespace Domain.DTOs
 {
-    public class SensorDataDTO
+    public class SensorDataDto
     {
         public int PropertyId { get; set; }
         public required string Name { get; set; }
