@@ -13,8 +13,8 @@ namespace Repository.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new SensorConfiguration());
-
+            modelBuilder.ApplyConfiguration(new SensorDataConfiguration());
+            
             base.OnModelCreating(modelBuilder);
         }
     }

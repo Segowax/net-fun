@@ -1,9 +1,8 @@
+using API;
 using Application.IoC;
 using AzureConfigurations.AppConfigurations;
 using AzureConfigurations.AppInsights;
 using AzureConfigurations.EventHub;
-using Microsoft.EntityFrameworkCore;
-using Repository.Context;
 
 try
 {
@@ -35,11 +34,7 @@ try
 
     app.MapControllers();
 
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<SensorContext>();
-        await context.Database.MigrateAsync();
-    }
+    await DatabaseMigrations.Run(app);
 
     app.Run();
 }

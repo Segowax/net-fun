@@ -2,7 +2,7 @@
 {
     public class SensorDataDto
     {
-        public int PropertyId { get; set; }
+        public required string SensorId { get; set; }
         public required string Name { get; set; }
         public required string Value { get; set; }
         public DateTime MeasurementTime { get; set; }

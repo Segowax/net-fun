@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Repository.Context.Configurations
 {
-    internal class SensorConfiguration : IEntityTypeConfiguration<SensorData>
+    internal class SensorDataConfiguration : IEntityTypeConfiguration<SensorData>
     {
         public void Configure(EntityTypeBuilder<SensorData> builder)
         {
-            builder.HasKey(x => x.PropertyId);
+            builder.HasKey(x => x.Id);
         }
     }
 }

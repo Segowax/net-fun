@@ -11,7 +11,7 @@ namespace Interface.Mapper
                 EnqueuedTime = sensorData.EnqueuedTime,
                 MeasurementTime = sensorData.MeasurementTime,
                 Name = sensorData.Name,
-                PropertyId = sensorData.PropertyId,
+                SensorId = sensorData.SensorId,
                 Value = sensorData.Value,
             };
     }
