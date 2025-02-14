@@ -34,7 +34,7 @@ try
 
     app.MapControllers();
 
-    await DatabaseMigrations.Run(app);
+    await DatabaseMigration.Run(app);
 
     app.Run();
 }

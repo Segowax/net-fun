@@ -4,7 +4,7 @@ using Repository.Context.DataSeed;
 
 namespace API
 {
-    public static class DatabaseMigrations
+    public static class DatabaseMigration
     {
         public static async Task Run(WebApplication app)
         {
