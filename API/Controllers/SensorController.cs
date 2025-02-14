@@ -1,7 +1,6 @@
 ﻿using Application;
 using Application.Queries;
 using Domain.DTOs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
