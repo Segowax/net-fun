@@ -21,7 +21,7 @@ namespace API.Controllers
         {
             try
             {
-                var result = await _mediator.SendAsync<GetAllSensorData, IEnumerable<SensorDataDto>>
+                var result = await _mediator.SendAsync<GetAllSensorData, IEnumerable<BaseSensorDataDto>>
                     (new GetAllSensorData());
 
                 return Ok(result);

@@ -19,7 +19,7 @@ public static class RegisterServices
         services.AddScoped<IMediator, Mediator>();
 
         // Explicitly register Queries
-        services.AddScoped<IQueryHandler<GetAllSensorData, IEnumerable<SensorDataDto>>, GetAllSensorDataHandler>();
+        services.AddScoped<IQueryHandler<GetAllSensorData, IEnumerable<BaseSensorDataDto>>, GetAllSensorDataHandler>();
 
         return services;
     }
