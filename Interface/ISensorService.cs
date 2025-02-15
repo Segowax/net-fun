@@ -4,6 +4,6 @@ namespace Interface
 {
     public interface ISensorService
     {
-        Task<IEnumerable<SensorDataDto>> GetAllSensorData();
+        Task<IEnumerable<BaseSensorDataDto>> GetAllSensorData();
     }
 }

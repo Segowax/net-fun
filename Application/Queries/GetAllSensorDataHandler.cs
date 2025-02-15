@@ -5,10 +5,10 @@ using Interface;
 
 namespace Application.Queries;
 
-public class GetAllSensorData : IQuery<IEnumerable<SensorDataDto>> { }
+public class GetAllSensorData : IQuery<IEnumerable<BaseSensorDataDto>> { }
 
 public class GetAllSensorDataHandler :
-    IQueryHandler<GetAllSensorData, IEnumerable<SensorDataDto>>
+    IQueryHandler<GetAllSensorData, IEnumerable<BaseSensorDataDto>>
 {
     public readonly ISensorService _sensorService;
 
@@ -17,7 +17,7 @@ public class GetAllSensorDataHandler :
         _sensorService = sensorService;
     }
 
-    public async Task<IEnumerable<SensorDataDto>> HandleAsync(GetAllSensorData query)
+    public async Task<IEnumerable<BaseSensorDataDto>> HandleAsync(GetAllSensorData query)
     {
         return await _sensorService.GetAllSensorData();
     }
