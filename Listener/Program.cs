@@ -1,27 +1,59 @@
 ﻿using Listener;
+using Listener.Options;
+using Microsoft.Extensions.Configuration;
 
-var communicationListener = new Rs232();
+var builder = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+IConfiguration configuration = builder.Build();
 
-#pragma warning disable CS4014 // To wywołanie nie jest oczekiwane, dlatego wykonywanie bieżącej metody będzie kontynuowane do czasu ukończenia wywołania
-Task.Run(communicationListener.Listen);
-#pragma warning restore CS4014 // To wywołanie nie jest oczekiwane, dlatego wykonywanie bieżącej metody będzie kontynuowane do czasu ukończenia wywołania
+var rs232Options = configuration
+    .GetSection(Rs232Options.Rs232)
+    .Get<Rs232Options>()
+    ?? throw new ArgumentNullException($"{nameof(Rs232Options)} are not set.");
+var eventHubOptions = configuration
+    .GetSection(EventHubOptions.EventHub)
+    .Get<EventHubOptions>()
+    ?? throw new ArgumentNullException($"{nameof(EventHubOptions)} are not set.");
 
+var communicationListener = new Rs232(rs232Options);
+
+#pragma warning disable CS4014
+Task.Run(async () =>
+{
+    try
+    {
+        await communicationListener.Listen();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    };
+});
+#pragma warning restore CS4014
+
+var azureEventHub = new AzureEventHub(eventHubOptions);
 
 while (true)
 {
-    Console.WriteLine("Press to q to look up current list, press x to kill");
+    Console.WriteLine("Press to q to look up current list, press x to kill, press s to send events");
     var button = Console.ReadKey();
 
     if (button.Key == ConsoleKey.Q)
     {
-        foreach (var data in communicationListener.rs232Data.Values)
+        foreach (var data in BufforToSend.rs232Data.Values)
         {
             Console.WriteLine(data);
         }
     }
-    if (button.Key == ConsoleKey.X)
+    else if (button.Key == ConsoleKey.S)
+    {
+        await azureEventHub.SendEvent();
+    }
+    else if (button.Key == ConsoleKey.X)
     {
         communicationListener.Dispose();
+        await azureEventHub.DisposeAsync();
         break;
     }
 }

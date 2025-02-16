@@ -1,24 +1,25 @@
-﻿using System.Collections.Concurrent;
+﻿using Listener.Options;
+using System.Collections.Concurrent;
 using System.IO.Ports;
-using static Listener.Common;
 
 namespace Listener
 {
     internal class Rs232 : IDisposable
     {
-        internal ConcurrentDictionary<string, string> rs232Data = [];
-        private SerialPort? _serialPort;
-        private CancellationTokenSource _cts;
         private bool _isDisposed;
+        private SerialPort? _serialPort;
+        private readonly CancellationTokenSource _cts;
+        private readonly Rs232Options _rs232Options;
 
-        public Rs232()
+        public Rs232(Rs232Options rs232Options)
         {
             _cts = new CancellationTokenSource();
+            _rs232Options = rs232Options;
         }
 
         internal async Task Listen()
         {
-            using (_serialPort = new SerialPort(Rs232Configurations.PortName, Rs232Configurations.BaudRate))
+            using (_serialPort = new SerialPort(_rs232Options.Port, _rs232Options.BaudRate))
             {
                 _serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
                 _serialPort.Open();
@@ -56,7 +57,7 @@ namespace Listener
                     }
                 }
 
-                rs232Data.TryAdd(Guid.NewGuid().ToString(), data.Replace("@", string.Empty));
+                BufforToSend.rs232Data.TryAdd(Guid.NewGuid().ToString(), data.Replace("@", string.Empty));
             }
             catch (Exception ex)
             {
@@ -70,7 +71,7 @@ namespace Listener
             GC.SuppressFinalize(this);
         }
 
-        internal virtual void Dispose(bool disposing)
+        internal void Dispose(bool disposing)
         {
             if (_isDisposed)
             {
@@ -98,7 +99,7 @@ namespace Listener
             _isDisposed = true;
         }
 
-    ~Rs232()
+        ~Rs232()
         {
             Dispose(false);
         }
