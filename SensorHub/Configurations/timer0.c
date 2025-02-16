@@ -26,7 +26,7 @@ void timer0_Init() {
 ISR(TIMER0_OVF_vect) {
 	// Once per approximetely 3 minutes - 2747
 	static uint16_t interrupt_counter = 1;
-	if (interrupt_counter == 100) {
+	if (interrupt_counter == 2747) {
 		interrupt_counter = 1;
 
 		char buffer1[3];
