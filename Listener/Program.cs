@@ -38,6 +38,7 @@ while (true)
 {
     Console.WriteLine("Press to q to look up current list, press x to kill, press s to send events");
     var button = Console.ReadKey();
+    Console.WriteLine();
 
     if (button.Key == ConsoleKey.Q)
     {

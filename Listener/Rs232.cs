@@ -1,5 +1,4 @@
 ﻿using Listener.Options;
-using System.Collections.Concurrent;
 using System.IO.Ports;
 
 namespace Listener

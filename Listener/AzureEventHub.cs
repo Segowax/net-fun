@@ -22,9 +22,12 @@ namespace Listener
 
         public async Task SendEvent()
         {
-            // Create a batch of events 
-            using EventDataBatch eventBatch = await _producerClient.CreateBatchAsync();
+            if (BufforToSend.rs232Data.Count == 0)
+            {
+                return;
+            }
 
+            using EventDataBatch eventBatch = await _producerClient.CreateBatchAsync();
             foreach (var itemToSend in BufforToSend.rs232Data)
             {
                 if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(itemToSend.Value))))
@@ -52,6 +55,7 @@ namespace Listener
         {
             if (_producerClient != null)
             {
+                await _producerClient.CloseAsync();
                 await _producerClient.DisposeAsync();
             }
         }
