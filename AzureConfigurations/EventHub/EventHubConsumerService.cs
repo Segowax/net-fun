@@ -1,8 +1,14 @@
-﻿using Azure.Identity;
+﻿using Application;
+using Application.Commands;
+using Azure.Identity;
 using Azure.Messaging.EventHubs.Consumer;
+using Domain.DTOs;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using System.Text.Json;
 
 namespace AzureConfigurations.EventHub
 {
@@ -10,16 +16,19 @@ namespace AzureConfigurations.EventHub
     {
         private readonly string _eventHubNamespace;
         private readonly string _eventHubName;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<EventHubConsumerService> _logger;
         private EventHubConsumerClient? _consumerClient;
 
         public EventHubConsumerService(IConfiguration configuration,
+            IServiceScopeFactory serviceScopeFactory,
             ILogger<EventHubConsumerService> logger)
         {
             _eventHubNamespace = configuration["EventHub:Namespace"]
                 ?? throw new ArgumentNullException("EventHub:Namespace is not set in App Configurations");
             _eventHubName = configuration["EventHub:Name"]
                 ?? throw new ArgumentNullException("EventHub:Name is not set in App Configurations");
+            _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
         }
 
@@ -47,6 +56,7 @@ namespace AzureConfigurations.EventHub
         {
             if (_consumerClient != null)
             {
+                await _consumerClient.CloseAsync();
                 await _consumerClient.DisposeAsync();
             }
             await base.StopAsync(cancellationToken);
@@ -58,17 +68,22 @@ namespace AzureConfigurations.EventHub
             {
                 await foreach (PartitionEvent partitionEvent in _consumerClient!.ReadEventsAsync())
                 {
-                    _logger.LogInformation($"Odebrano zdarzenie z partycji: {partitionEvent.Partition.PartitionId}");
-                    _logger.LogInformation($"Treść zdarzenia: {System.Text.Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray())}");
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                        var jsonEventData = Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray());
+                        var sensorData = JsonSerializer.Deserialize<BaseSensorDataDto>(jsonEventData);
+
+                        if (sensorData != null)
+                        {
+                            await mediator.SendAsync(new SaveSensorData { Data = sensorData });
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Błąd podczas odbierania zdarzeń: {ex.Message}");
-            }
-            finally
-            {
-                await _consumerClient!.CloseAsync();
             }
         }
     }

@@ -3,6 +3,8 @@ using Azure.Messaging.EventHubs.Producer;
 using Azure.Messaging.EventHubs;
 using System.Text;
 using Listener.Options;
+using System.Text.Json;
+using Domain.DTOs;
 
 namespace Listener
 {
@@ -30,14 +32,20 @@ namespace Listener
             using EventDataBatch eventBatch = await _producerClient.CreateBatchAsync();
             foreach (var itemToSend in BufforToSend.rs232Data)
             {
-                if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(itemToSend.Value))))
+                var objectToSend = JsonSerializer.Deserialize<BaseSensorDataDto>(itemToSend.Value);
+                if (objectToSend != null)
                 {
-                    // if it is too large for the batch
-                    throw new Exception($"Event {itemToSend.Key} is too large for the batch and cannot be sent.");
-                }
-                else
-                {
-                    BufforToSend.rs232Data.TryRemove(itemToSend.Key, out _);
+                    objectToSend.EnqueuedTime = DateTime.UtcNow;
+                    var jsonToSend = JsonSerializer.Serialize(objectToSend);
+                    if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(jsonToSend))))
+                    {
+                        // if it is too large for the batch
+                        throw new Exception($"Event {itemToSend.Key} is too large for the batch and cannot be sent.");
+                    }
+                    else
+                    {
+                        BufforToSend.rs232Data.TryRemove(itemToSend.Key, out _);
+                    }
                 }
             }
 

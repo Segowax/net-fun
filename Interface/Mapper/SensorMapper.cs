@@ -10,37 +10,37 @@ namespace Interface.Mapper
         {
             if (double.TryParse(sensorData.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double doubleResult))
             {
-                return new DoubleSensorDataDto()
-                {
-                    EnqueuedTime = sensorData.EnqueuedTime,
-                    MeasurementTime = sensorData.MeasurementTime,
-                    Name = sensorData.Name,
-                    SensorId = sensorData.SensorId,
-                    Value = doubleResult
-                };
+                return new DoubleSensorDataDto(
+                    sensorId: sensorData.SensorId,
+                    name: sensorData.Name,
+                    enqueuedTime: sensorData.EnqueuedTime,
+                    value: doubleResult);
             }
             else if (bool.TryParse(sensorData.Value, out bool boolResult))
             {
-                return new BooleanSensorDataDto()
-                {
-                    EnqueuedTime = sensorData.EnqueuedTime,
-                    MeasurementTime = sensorData.MeasurementTime,
-                    Name = sensorData.Name,
-                    SensorId = sensorData.SensorId,
-                    Value = boolResult
-                };
+                return new BooleanSensorDataDto(
+                    sensorId: sensorData.SensorId,
+                    name: sensorData.Name,
+                    enqueuedTime: sensorData.EnqueuedTime,
+                    value: boolResult);
             }
             else
             {
-                return new StringSensorDataDto()
-                {
-                    EnqueuedTime = sensorData.EnqueuedTime,
-                    MeasurementTime = sensorData.MeasurementTime,
-                    Name = sensorData.Name,
-                    SensorId = sensorData.SensorId,
-                    Value = sensorData.Value
-                };
+                return new StringSensorDataDto(
+                    sensorId: sensorData.SensorId,
+                    name: sensorData.Name,
+                    enqueuedTime: sensorData.EnqueuedTime,
+                    value: sensorData.Value.ToString());
             }
         }
+
+        public static SensorData MapDtoToSensorDataEntity(this BaseSensorDataDto sensorDataDto) =>
+            new SensorData()
+            {
+                EnqueuedTime = sensorDataDto.EnqueuedTime,
+                Name = sensorDataDto.Name,
+                SensorId = sensorDataDto.SensorId,
+                Value = sensorDataDto.Value.ToString() ?? throw new Exception("ToDo")
+            };
     }
 }

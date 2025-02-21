@@ -1,4 +1,5 @@
-﻿using Application.Query;
+﻿using Application.CommandPattern;
+using Application.Query;
 using Application.QueryPattern;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +23,22 @@ public class Mediator : IMediator
                 .GetRequiredService<IQueryHandler<TQuery, TResult>>();
 
             return await service.HandleAsync(query);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message);
+        }
+    }
+
+    public async Task SendAsync<TCommand>(TCommand command)
+        where TCommand : class, ICommand
+    {
+        try
+        {
+            var service = _serviceProvider
+                .GetRequiredService<ICommandHandler<TCommand>>();
+
+            await service.HandleAsync(command);
         }
         catch (Exception ex)
         {

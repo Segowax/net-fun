@@ -14,6 +14,13 @@ namespace Repository.Repositories
             _context = context;
         }
 
+        public async Task AddAsync(TEntity entity)
+        {
+            _context.Add(entity);
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             var data = _context.Set<TEntity>();

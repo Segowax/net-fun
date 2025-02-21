@@ -1,11 +1,21 @@
 ﻿namespace Domain.DTOs
 {
-    public abstract class BaseSensorDataDto
+    public class BaseSensorDataDto
     {
-        public required string SensorId { get; set; }
-        public required string Name { get; set; }
-        public DateTime MeasurementTime { get; set; }
+        public BaseSensorDataDto(string sensorId,
+            string name,
+            DateTime enqueuedTime,
+            object value)
+        {
+            SensorId = sensorId;
+            Name = name;
+            EnqueuedTime = enqueuedTime;
+            Value = value;
+        }
+
+        public string SensorId { get; set; }
+        public string Name { get; set; }
         public DateTime EnqueuedTime { get; set; }
-        public virtual required object Value { get; set; }
+        public virtual object Value { get; set; }
     }
 }

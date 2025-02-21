@@ -1,4 +1,6 @@
-﻿using Application.Queries;
+﻿using Application.CommandPattern;
+using Application.Commands;
+using Application.Queries;
 using Application.Query;
 using Domain.DTOs;
 using Interface.IoC;
@@ -20,6 +22,9 @@ public static class RegisterServices
 
         // Explicitly register Queries
         services.AddScoped<IQueryHandler<GetAllSensorData, IEnumerable<BaseSensorDataDto>>, GetAllSensorDataHandler>();
+
+        // Explicitly register Commands
+        services.AddScoped<ICommandHandler<SaveSensorData>, SaveSensorDataHandler>();
 
         return services;
     }

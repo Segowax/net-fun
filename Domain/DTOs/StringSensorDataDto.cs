@@ -2,7 +2,18 @@
 {
     public class StringSensorDataDto : BaseSensorDataDto
     {
-        public override required object Value
+        public StringSensorDataDto(string sensorId,
+            string name,
+            DateTime enqueuedTime,
+            object value) : base(sensorId, name, enqueuedTime, value)
+        {
+            SensorId = sensorId;
+            Name = name;
+            EnqueuedTime = enqueuedTime;
+            Value = value;
+        }
+
+        public override object Value
         {
             get => (string)base.Value;
             set => base.Value = (string)value;

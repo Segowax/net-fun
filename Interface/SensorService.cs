@@ -19,11 +19,33 @@ namespace Interface
 
         public async Task<IEnumerable<BaseSensorDataDto>> GetAllSensorData()
         {
-            var result = await _sensorRepository.GetAllAsync();
+            try
+            {
+                var result = await _sensorRepository.GetAllAsync();
 
-            return result
-                .ToList()
-                .ConvertAll(x => x.MapSensorDataToDto());
+                return result
+                    .ToList()
+                    .ConvertAll(x => x.MapSensorDataToDto());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(GetAllSensorData)} - Error getting all sensor data");
+                throw;
+            }
+        }
+
+        public async Task SaveSensorData(BaseSensorDataDto data)
+        {
+            try
+            {
+                var dataToSave = data.MapDtoToSensorDataEntity();
+                await _sensorRepository.AddAsync(dataToSave);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(SaveSensorData)} - Error saving sensor data");
+                throw;
+            }
         }
     }
 }
