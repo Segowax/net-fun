@@ -8,9 +8,9 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddMyAzureAppConfigurations(builder.Configuration);
     builder.Configuration.AddJsonFile($"appsettings.Development.json", optional: true, reloadOnChange: true);
-    builder.Configuration.AddEnvironmentVariables();
 
     builder.Services.RegisterMyAzureAppConfigurations();
     builder.Services.RegisterMyAppInsightsConfigurations("API");
