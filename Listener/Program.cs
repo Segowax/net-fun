@@ -33,23 +33,24 @@ Task.Run(async () =>
 #pragma warning restore CS4014
 
 var azureEventHub = new AzureEventHub(eventHubOptions);
+BufforToSend.rs232Data.ItemAdded += async (sender, args) =>
+{
+    await azureEventHub.SendEvent(args.Value);
+    BufforToSend.rs232Data.Remove(args.Key);
+};
 
 while (true)
 {
-    Console.WriteLine("Press to q to look up current list, press x to kill, press s to send events");
+    Console.WriteLine("Press to q to look up current list, press x to kill.");
     var button = Console.ReadKey();
     Console.WriteLine();
 
     if (button.Key == ConsoleKey.Q)
     {
-        foreach (var data in BufforToSend.rs232Data.Values)
+        foreach (var data in BufforToSend.rs232Data.Data.Values)
         {
             Console.WriteLine(data);
         }
-    }
-    else if (button.Key == ConsoleKey.S)
-    {
-        await azureEventHub.SendEvent();
     }
     else if (button.Key == ConsoleKey.X)
     {
