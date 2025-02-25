@@ -37,10 +37,10 @@ int main() {
 			door_state = current_door_state;
 			if (door_state) {
 				circular_buffer_push(&buffer_for_door,
-						"{\"SensorId\":\"nax_open_closed_sensor_1\",\"Name\":\"Inside Lock\",\"Value\":\"Closed\")@");
+						"{\"SensorId\":\"nax_open_closed_sensor_1\",\"Name\":\"Inside Lock\",\"Value\":\"Closed\"}@");
 			} else {
 				circular_buffer_push(&buffer_for_door,
-						"{\"SensorId\":\"nax_open_closed_sensor_1\",\"Name\":\"Inside Lock\",\"Value\":\"Open\")@");
+						"{\"SensorId\":\"nax_open_closed_sensor_1\",\"Name\":\"Inside Lock\",\"Value\":\"Open\"}@");
 			}
 		}
 	}
