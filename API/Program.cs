@@ -31,6 +31,10 @@ try
 
     app.UseHttpsRedirection();
 
+    app.UseCors(builder => builder
+        .AllowAnyOrigin()
+        .WithMethods(HttpMethods.Get));
+
     app.UseAuthorization();
 
     app.MapControllers();
