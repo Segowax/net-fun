@@ -33,7 +33,8 @@ try
 
     app.UseCors(builder => builder
         .AllowAnyOrigin()
-        .WithMethods(HttpMethods.Get));
+        .WithMethods(HttpMethods.Get)
+        .AllowAnyHeader());
 
     app.UseAuthorization();
 
