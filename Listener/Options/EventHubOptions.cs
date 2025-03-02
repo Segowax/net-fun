@@ -6,5 +6,6 @@
 
         public required string Namespace { get; set; }
         public required string HubName { get; set; }
+        public string ConnectionString { get; set; } = string.Empty;
     }
 }
