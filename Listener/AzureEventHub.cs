@@ -4,7 +4,7 @@ using Azure.Messaging.EventHubs;
 using System.Text;
 using Listener.Options;
 using System.Text.Json;
-using Domain.DTOs;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Listener
 {
@@ -12,11 +12,16 @@ namespace Listener
     {
         private readonly EventHubProducerClient _producerClient;
         private readonly EventHubOptions _eventHubOptions;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public AzureEventHub(EventHubOptions eventHubOptions)
         {
             try
             {
+                _jsonSerializerOptions = new JsonSerializerOptions
+                {
+                    TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+                };
                 _eventHubOptions = eventHubOptions;
                 if (string.IsNullOrEmpty(_eventHubOptions.ConnectionString))
                 {
@@ -52,11 +57,11 @@ namespace Listener
             try
             {
                 using EventDataBatch eventBatch = await _producerClient.CreateBatchAsync();
-                var objectToSend = JsonSerializer.Deserialize<BaseSensorDataDto>(microcontrollerData);
+                var objectToSend = JsonSerializer.Deserialize<BaseSensorDataDto>(microcontrollerData, _jsonSerializerOptions);
                 if (objectToSend != null)
                 {
                     objectToSend.EnqueuedTime = DateTime.UtcNow;
-                    var jsonToSend = JsonSerializer.Serialize(objectToSend);
+                    var jsonToSend = JsonSerializer.Serialize(objectToSend, _jsonSerializerOptions);
                     if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(jsonToSend))))
                     {
                         // if it is too large for the batch
