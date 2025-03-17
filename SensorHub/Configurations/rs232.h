@@ -11,7 +11,8 @@
 #define UART_BAUD 9600
 #define __UBRR ((F_CPU+UART_BAUD*8UL) / (16UL*UART_BAUD)-1)
 
-void USART_init(uint16_t ubrr);
-void USART_Transmit(char data);
+void usart_init(uint16_t ubrr);
+void usart_transmit_char(char c);
+void usart_transmit_string(char* s);
 
 #endif /* CONFIGURATIONS_RS232_H_ */

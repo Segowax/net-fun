@@ -6,45 +6,43 @@
  */
 
 #include <util/delay.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "Configurations/rs232.h"
-#include "Configurations/DS18B20/1wire.h"
 #include "Configurations/DS18B20/DS18B20.h"
 
 int main() {
-	uint8_t rom[8];
-	uint8_t byte;
-	uint8_t bit;
-	int8_t i;
-	int8_t j;
+	char result[11];
+	char integer[4];
+	char decimal[5];
 
-	if (!onewire_reset_presence_procedure()) {
-		onewire_byte_write(READ_ROM);
-		for (i = 0; i < 8; i++) {
-			byte = onewire_byte_read();
-			rom[i] = byte;
-		}
-	}
-	if (crc8(rom, 8)) {
-		// error
-	}
-
-	USART_init(__UBRR);
-
+	usart_init(__UBRR);
 	_delay_ms(10);
 
-	for (i = 7; i >= 0; i--) {
-		byte = rom[i];
-		for (j = 7; j >= 0; j--) {
-			bit = (byte >> j) & 1;
-			if (bit)
-				USART_Transmit('1');
-			else
-				USART_Transmit('0');
+	if (check_rom()) {
+		usart_transmit_string("ROM error");
+	} else if (post_convert_temperature()) {
+		usart_transmit_string("POST CONVERT error");
+	} else if (get_scratchpad()) {
+		usart_transmit_string("GET SCRATCHPAD error");
+	} else if (finish_connection()) {
+		usart_transmit_string("FINISH CONNECTION error");
+	} else {
+		itoa(temperature_integer_part, integer, 10);
+		itoa(temperature_decimal_part, decimal, 10);
+
+		strcpy(result, integer);
+		strcat(result, ".");
+		if (temperature_decimal_part < 1000) {
+			strcat(result, "0625");
+		} else {
+			strcat(result, decimal);
 		}
 	}
 
-	USART_Transmit('\n');
+	usart_transmit_string(result);
+	usart_transmit_char('\n');
 
 	while (1) {
 

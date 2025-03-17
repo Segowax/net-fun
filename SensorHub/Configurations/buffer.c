@@ -47,7 +47,7 @@ void circular_buffer_pop(volatile circular_buffer_t *buffer) {
 	register char sign;
 	while (buffer->head != buffer->tail) {
 		sign = buffer->buffer[buffer->tail];
-		USART_Transmit(sign);
+		usart_transmit_string(sign);
 		buffer->tail = (buffer->tail + 1) % BUFFER_SIZE;
 	}
 	buffer->full = false;
