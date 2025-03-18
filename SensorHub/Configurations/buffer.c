@@ -8,8 +8,8 @@
 #include "buffer.h"
 #include "rs232.h"
 
-volatile circular_buffer_t buffer_for_timer0;
 volatile circular_buffer_t buffer_for_door;
+volatile circular_buffer_t buffer_for_temperature;
 
 void circular_buffer_init(volatile circular_buffer_t *buffer) {
 	buffer->head = 0;
@@ -47,7 +47,7 @@ void circular_buffer_pop(volatile circular_buffer_t *buffer) {
 	register char sign;
 	while (buffer->head != buffer->tail) {
 		sign = buffer->buffer[buffer->tail];
-		usart_transmit_string(sign);
+		usart_transmit_char(sign);
 		buffer->tail = (buffer->tail + 1) % BUFFER_SIZE;
 	}
 	buffer->full = false;

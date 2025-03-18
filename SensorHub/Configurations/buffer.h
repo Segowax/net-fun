@@ -20,8 +20,8 @@ typedef struct {
     bool full;
 } circular_buffer_t;
 
-extern volatile circular_buffer_t buffer_for_timer0;
 extern volatile circular_buffer_t buffer_for_door;
+extern volatile circular_buffer_t buffer_for_temperature;
 
 void circular_buffer_init(volatile circular_buffer_t *buffer);
 bool circular_buffer_is_full(volatile circular_buffer_t *buffer);

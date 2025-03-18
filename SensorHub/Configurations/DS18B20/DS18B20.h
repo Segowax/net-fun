@@ -30,15 +30,34 @@
 #define RESET_PRESENCE_PROCEDURE_ERROR 1
 #define ROM_CHECK_ERROR 2
 #define READ_SCRATCHPAD_ERROR 3
+#define ERROR_DURING_CONVERTING_TEMPERATURE 4
 
 /* Settings */
-#define CONVERSION_TIME 750
+#define MEASUREMENT_RESOLUTION 9
+
+#if MEASUREMENT_RESOLUTION == 12
+#define CONVERSION_TIME (750 / 1)
+#endif
+
+#if MEASUREMENT_RESOLUTION == 11
+#define CONVERSION_TIME (750 / 2)
+#endif
+
+#if MEASUREMENT_RESOLUTION == 10
+#define CONVERSION_TIME (750 / 4)
+#endif
+
+#if MEASUREMENT_RESOLUTION == 9
+#define CONVERSION_TIME (750 / 8)
+#endif
+/***********************************/
 
 extern volatile char temperature_sign;
 extern volatile uint8_t temperature_integer_part;
 extern volatile uint16_t temperature_decimal_part;
+extern volatile uint8_t current_scratchpad[8];
 
-uint8_t check_rom(void);
+uint8_t configure_sensor(void);
 uint8_t post_convert_temperature(void);
 uint8_t get_scratchpad(void);
 uint8_t finish_connection(void);
