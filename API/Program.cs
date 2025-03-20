@@ -2,7 +2,6 @@ using API;
 using Application.IoC;
 using AzureConfigurations.AppConfigurations;
 using AzureConfigurations.AppInsights;
-using AzureConfigurations.EventHub;
 
 try
 {
@@ -14,7 +13,6 @@ try
 
     builder.Services.RegisterMyAzureAppConfigurations();
     builder.Services.RegisterMyAppInsightsConfigurations("API");
-    builder.Services.RegisterEventHubConfiguration();
 
     builder.Services.RegisterApplicationLayerServices(builder.Configuration);
 

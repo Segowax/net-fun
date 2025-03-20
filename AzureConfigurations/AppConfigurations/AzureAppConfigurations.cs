@@ -20,7 +20,6 @@ namespace AzureConfigurations.AppConfigurations
 
         public static IServiceCollection RegisterMyAzureAppConfigurations(this IServiceCollection services)
         {
-
             services.AddAzureAppConfiguration();
 
             return services;
