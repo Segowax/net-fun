@@ -1,8 +1,16 @@
-name: Utwórz i wdróż aplikację .NET Core w aplikacji funkcji my-wonderful-function-app
+name: Build and deploy ASP.Net Core app to Azure Function my-wonderful-function-app
 on:
   push:
     branches:
-    - azure_function
+    - main
+    paths:
+    - 'SensorDataReceiver.sln'
+    - 'Application/**'
+    - 'AzureConfigurations/**'
+    - 'Domain/**'
+    - 'Interface/**'
+    - 'Repository/**'
+    - 'AzureFunction/**'  
 env:
   AZURE_FUNCTIONAPP_NAME: my-wonderful-function-app
   AZURE_FUNCTIONAPP_PACKAGE_PATH: AzureFunction\published
@@ -10,6 +18,7 @@ env:
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: AzureFunction
   DOTNET_CORE_VERSION_INPROC: 6.0.x
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -20,7 +29,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: Setup .NET Core (for inproc extensions)
-      uses: actions/setup-dotnetv4
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION_INPROC }}
         include-prerelease: True
