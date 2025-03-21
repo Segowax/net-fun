@@ -10,15 +10,22 @@
 
 #include "rs232.h"
 
-void USART_init(uint16_t ubrr) {
+void usart_init(uint16_t ubrr) {
 	UBRRH = (uint8_t) (ubrr >> 8);
 	UBRRL = (uint8_t) ubrr;
 	UCSRB = (1 << RXEN) | (1 << TXEN);
 	UCSRC = (1 << URSEL) | (3 << UCSZ0);
 }
 
-void USART_Transmit(char data) {
+void usart_transmit_char(char data) {
 	while (!(UCSRA & (1 << UDRE)))
 		;
 	UDR = data;
+}
+
+void usart_transmit_string(char* s) {
+	register char c;
+	while ((c = *s++)) {
+		usart_transmit_char(c);
+	}
 }
