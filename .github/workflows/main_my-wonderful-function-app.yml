@@ -7,6 +7,14 @@ on:
   push:
     branches:
       - main
+    paths:
+    - 'SensorDataReceiver.sln'
+    - 'Application/**'
+    - 'AzureConfigurations/**'
+    - 'Domain/**'
+    - 'Interface/**'
+    - 'Repository/**'
+    - 'AzureFunction/**'
   workflow_dispatch:
 
 env:
