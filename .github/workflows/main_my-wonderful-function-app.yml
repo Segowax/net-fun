@@ -22,34 +22,54 @@ env:
   DOTNET_VERSION: '8.0.x' # set this to the dotnet version to use
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: windows-latest
     permissions:
-      id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
 
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 
-      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
-        uses: actions/setup-dotnet@v1
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: '8.x'
 
-      - name: 'Resolve Project Dependencies Using Dotnet'
-        shell: pwsh
-        run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build --configuration Release --output ./output
-          popd
-      
+      - name: Build with dotnet
+        run: dotnet build SensorDataReceiver.sln --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish SensorDataReceiver.sln -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'AzureFunction'
+      url: ${{ steps.fa.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+          
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_66B1FF057FC04D61A9112FD09827190A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_18B7754E7DF34087ACDB89B52E620D32 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_685A36DBF6964657B18ED4DD5B3D332A }}
+          tenant-id: ${{ secrets.AZURETENANTID_18B7754E7DF34087ACDB89B52E620D32 }}
+          subscription-id: ${{ secrets.AZURESUBSCRIPTIONID_685A36DBF6964657B18ED4DD5B3D332A }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
