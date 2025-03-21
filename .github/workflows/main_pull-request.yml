@@ -42,3 +42,21 @@ jobs:
 
       - name: Build project
         run: dotnet build Listener.sln --no-restore --configuration Release
+
+  build_azure_function_solution:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore SensorDataReceiver.sln
+
+      - name: Build project
+        run: dotnet build SensorDataReceiver.sln --no-restore --configuration Release
