@@ -52,7 +52,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'AzureFunction'
       url: ${{ steps.fa.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
