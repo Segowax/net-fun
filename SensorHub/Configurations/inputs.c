@@ -11,8 +11,8 @@
 #include "inputs.h"
 
 void buttons_init() {
-	DDRD &= ~KEY_PIN_1;
-	PORTD |= KEY_PIN_1;
+	SENSOR_PORT_DDR &= ~SENSOR_PIN_1;
+	SENSOR_PORT_OUT |= SENSOR_PIN_1;
 }
 
 bool is_closed(uint8_t port, uint8_t button) {
