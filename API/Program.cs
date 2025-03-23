@@ -18,21 +18,13 @@ try
 
     builder.Services.AddControllers();
 
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-
     var app = builder.Build();
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
 
     app.UseHttpsRedirection();
 
     app.UseCors(builder => builder
         .AllowAnyOrigin()
-        .WithMethods(HttpMethods.Get)
-        .AllowAnyHeader());
+        .WithMethods(HttpMethods.Get));
 
     app.UseAuthorization();
 
