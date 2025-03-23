@@ -18,8 +18,9 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '8.0.x' # set this to the dotnet version to use
+  AZURE_FUNCTIONAPP_NAME: 'my-wonderful-function-app'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   build:
@@ -34,7 +35,7 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build with dotnet
         run: dotnet build SensorDataReceiver.sln --configuration Release
@@ -63,19 +64,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-          
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREFUNCTION_CLIENTID_66B1FF057FC04D61A9112FD09827190A }}
-          tenant-id: ${{ secrets.AZURETENANTID_1535A9C03FF4436C85A78878A56EF53D }}
-          subscription-id: ${{ secrets.AZURESUBSCRIPTIONID_BF690D004BBE4C04AB1FA5D2F761ADCF }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'my-wonderful-function-app'
-          slot-name: 'Production'
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
