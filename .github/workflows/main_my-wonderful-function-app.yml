@@ -35,8 +35,12 @@ jobs:
     - name: 'Resolve Project Dependencies Using Dotnet'
       shell: pwsh
       run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH | Split-Path -Parent }}'
-        dotnet build --configuration Release --output ./output ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH | Split-Path -Leaf }}
+        $solutionPath = '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        $solutionDirectory = Split-Path -Parent $solutionPath
+        $solutionFileName = Split-Path -Leaf $solutionPath
+    
+        pushd $solutionDirectory
+        dotnet build --configuration Release --output ./output $solutionFileName
         popd
 
     - name: 'Run Azure Functions Action'
