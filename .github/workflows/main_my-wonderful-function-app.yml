@@ -16,7 +16,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'my-wonderful-function-app'
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'SensorDataReceiver.sln'
   DOTNET_VERSION: '8.0.x'
 
 jobs:
