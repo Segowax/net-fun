@@ -56,7 +56,7 @@ namespace Listener
                     }
                 }
 
-                BufforToSend.rs232Data.TryAdd(Guid.NewGuid().ToString(), data.Replace("@", string.Empty));
+                Task.Run(() => BufforToSend.rs232Data.TryAdd(Guid.NewGuid().ToString(), data));
             }
             catch (Exception ex)
             {

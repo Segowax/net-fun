@@ -18,7 +18,7 @@
 #include "Configurations/inputs.h"
 #include "Configurations/DS18B20/DS18B20.h"
 
-void do_measure(void);
+uint8_t do_measure(void);
 void fill_up_buffer(volatile circular_buffer_t *buffer,
 		const char *PROGMEM sensor_id, const char *PROGMEM sensor_name,
 		char *sensor_value);
@@ -46,14 +46,14 @@ int main() {
 
 		sensor_open_closed = check_open_close_sensor(sensor_open_closed);
 		if (flag) {
-			if (minute % 2 == 0) {
-				do_measure();
-			}
 			if (minute % 5 == 0) {
-				prepare_sensor_value_to_send(sensor_value);
-				fill_up_buffer(&buffer_for_temperature, temperature_sensor_id_1,
-						temperature_sensor_name, sensor_value);
-				sensor_value[0] = '\0';
+				if (!do_measure()) {
+					prepare_sensor_value_to_send(sensor_value);
+					fill_up_buffer(&buffer_for_temperature,
+							temperature_sensor_id_1, temperature_sensor_name,
+							sensor_value);
+					sensor_value[0] = '\0';
+				}
 			}
 
 			flag = 0;
@@ -61,16 +61,26 @@ int main() {
 	}
 }
 
-void do_measure(void) {
+uint8_t do_measure(void) {
 	if (configure_sensor()) {
 		usart_transmit_string("!ROM error@");
+
+		return 1;
 	} else if (post_convert_temperature()) {
 		usart_transmit_string("!POST CONVERT error@");
+
+		return 1;
 	} else if (get_scratchpad()) {
 		usart_transmit_string("!GET SCRATCHPAD error@");
+
+		return 1;
 	} else if (finish_connection()) {
 		usart_transmit_string("!FINISH CONNECTION error@");
+
+		return 1;
 	}
+
+	return 0;
 }
 
 void prepare_sensor_value_to_send(char *result) {

@@ -55,16 +55,20 @@ try
 
     while (!cancellationTokenSource.Token.IsCancellationRequested)
     {
-        Console.WriteLine("Press to q to look up current list, press x to kill.");
+        Console.WriteLine("Press to l to look up error list, d to delete error list, x to kill and exit.");
         var button = Console.ReadKey();
         Console.WriteLine();
 
-        if (button.Key == ConsoleKey.Q)
+        if (button.Key == ConsoleKey.L)
         {
-            foreach (var data in BufforToSend.rs232Data.Data.Values)
+            foreach (var data in BufforToSend.rs232Data.Error.Values)
             {
                 Console.WriteLine(data);
             }
+        }
+        else if (button.Key == ConsoleKey.D)
+        {
+            BufforToSend.rs232Data.Error.Values.Clear();
         }
         else if (button.Key == ConsoleKey.X)
         {

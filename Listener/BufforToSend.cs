@@ -10,16 +10,26 @@ namespace Listener
     internal class ObservableConcurrentDictionary<TKey, TValue> where TKey : notnull
     {
         internal readonly ConcurrentDictionary<TKey, TValue> Data = [];
+        internal readonly ConcurrentDictionary<TKey, TValue> Error = [];
         internal event EventHandler<KeyValuePair<TKey, TValue>>? ItemAdded;
 
         internal bool TryAdd(TKey key, TValue value)
         {
-            if (Data.TryAdd(key, value))
+            if (value is not null && value is string valueString)
             {
-                OnItemAdded(new KeyValuePair<TKey, TValue>(key, value));
+                if (valueString.StartsWith('{') && valueString.EndsWith('@'))
+                {
+                    valueString = valueString.Replace("@", string.Empty);
+                    if (Data.TryAdd(key, (TValue)(object)valueString))
+                    {
+                        OnItemAdded(new KeyValuePair<TKey, TValue>(key, (TValue)(object)valueString));
 
-                return true;
+                        return true;
+                    }
+                }
             }
+
+            Error.TryAdd(key, value);
 
             return false;
         }
