@@ -14,6 +14,11 @@ on:
     - 'API/**'
   workflow_dispatch:
 
+env:
+  APPNAME_NAME: 'my-wonderful-API'
+  SOLUTION_NAME: 'API.sln'
+  DOTNET_VERSION: '8.0.x'
+
 jobs:
   build:
     runs-on: windows-latest
@@ -21,20 +26,21 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: 'Set up .NET Core'
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Build with dotnet
-        run: dotnet build API.sln --configuration Release
+      - name: 'Build with dotnet'
+        run: dotnet build ${{ env.SOLUTION_NAME }} --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish API.sln -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: 'Publish with dotnet'
+        run: dotnet publish ${{ env.SOLUTION_NAME }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
-      - name: Upload artifact for deployment job
+      - name: 'Upload artifact for deployment job'
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
@@ -51,23 +57,23 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download artifact from build job
+      - name: 'Download artifact from build job'
         uses: actions/download-artifact@v4
         with:
           name: .net-app
       
-      - name: Login to Azure
+      - name: 'Login to Azure'
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_315CC2A359844E6A9A80AB838CE43987 }}
           tenant-id: ${{ secrets.AZURETENANTID_1535A9C03FF4436C85A78878A56EF53D }}
           subscription-id: ${{ secrets.AZURESUBSCRIPTIONID_BF690D004BBE4C04AB1FA5D2F761ADCF }}
 
-      - name: Deploy to Azure Web App
+      - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'my-wonderful-API'
+          app-name: ${{ env.APPNAME_NAME }}
           slot-name: 'Production'
           package: .
           
