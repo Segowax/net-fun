@@ -15,37 +15,44 @@ namespace Repository.Context.DataSeed
                     new()
                     {
                         EnqueuedTime = new DateTime(2025, 1, 1, 12, 10, 15, DateTimeKind.Utc),
-                        Name = "Temperature Sensor 1",
-                        SensorId = "nax_sensor_temperature__1",
+                        Name = "Inside Temperature",
+                        SensorId = "nax_temperature_sensor_1",
                         Value = "15.1"
                     },
                     new()
                     {
                         EnqueuedTime = new DateTime(2025, 1, 1, 12, 10, 15, DateTimeKind.Utc),
-                        Name = "Temperature Sensor 2",
-                        SensorId = "nax_sensor_temperature__2",
-                        Value = "16.0"
+                        Name = "Outside Temperature",
+                        SensorId = "nax_temperature_sensor_2",
+                        Value = "14.0"
                     },
                     new()
                     {
                         EnqueuedTime = new DateTime(2025, 1, 1, 12, 11, 15, DateTimeKind.Utc),
-                        Name = "Temperature Sensor 1",
-                        SensorId = "nax_sensor_temperature__1",
+                        Name = "Inside Temperature",
+                        SensorId = "nax_temperature_sensor_1",
                         Value = "15.5"
                     },
                     new()
                     {
                         EnqueuedTime = new DateTime(2025, 1, 1, 12, 11, 15, DateTimeKind.Utc),
-                        Name = "Temperature Sensor 2",
-                        SensorId = "nax_sensor_temperature__2",
-                        Value = "15.9"
+                        Name = "Outside Temperature",
+                        SensorId = "nax_temperature_sensor_2",
+                        Value = "14.9"
                     },
                     new()
                     {
                         EnqueuedTime = new DateTime(2025, 2, 12, 10, 10, 0, DateTimeKind.Utc),
-                        Name = "Flag Sensor 1",
-                        SensorId = "nax_sensor_flag__2",
-                        Value = "True"
+                        Name = "Inside Lock",
+                        SensorId = "nax_open_closed_sensor_1",
+                        Value = "Open"
+                    },
+                    new()
+                    {
+                        EnqueuedTime = new DateTime(2025, 1, 1, 12, 11, 15, DateTimeKind.Utc),
+                        Name = "Outside Temperature",
+                        SensorId = "nax_temperature_sensor_2",
+                        Value = "SOMETHING CANNOT BE PARSE TO DOUBLE - ERROR"
                     },
                 });
 

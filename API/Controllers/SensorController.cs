@@ -31,5 +31,21 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("GetTemperature")]
+        public async Task<IActionResult> GetAllTemperatureData()
+        {
+            try
+            {
+                var result = await _mediator.SendAsync<GetTemperatureSensorData, IEnumerable<DoubleSensorDataDto>>
+                    (new GetTemperatureSensorData());
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

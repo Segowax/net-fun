@@ -19,6 +19,6 @@ public class GetAllSensorDataHandler :
 
     public async Task<IEnumerable<BaseSensorDataDto>> HandleAsync(GetAllSensorData query)
     {
-        return await _sensorService.GetAllSensorData();
+        return await _sensorService.GetAllSensorDataAsync();
     }
 }

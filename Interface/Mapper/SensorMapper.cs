@@ -34,6 +34,20 @@ namespace Interface.Mapper
             }
         }
 
+        public static DoubleSensorDataDto? MapToDoubleSensorDataDto(this SensorData sensorData)
+        {
+            if (double.TryParse(sensorData.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double doubleResult))
+            {
+                return new DoubleSensorDataDto(
+                    sensorId: sensorData.SensorId,
+                    name: sensorData.Name,
+                    enqueuedTime: sensorData.EnqueuedTime,
+                    value: doubleResult);
+            }
+
+            return null;
+        }
+
         public static SensorData MapDtoToSensorDataEntity(this BaseSensorDataDto sensorDataDto) =>
             new SensorData()
             {

@@ -17,7 +17,7 @@ namespace Interface
             _logger = logger;
         }
 
-        public async Task<IEnumerable<BaseSensorDataDto>> GetAllSensorData()
+        public async Task<IEnumerable<BaseSensorDataDto>> GetAllSensorDataAsync()
         {
             try
             {
@@ -29,12 +29,31 @@ namespace Interface
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(GetAllSensorData)} - Error getting all sensor data");
+                _logger.LogError(ex, $"{nameof(GetAllSensorDataAsync)} - Error getting all sensor data");
                 throw;
             }
         }
 
-        public async Task SaveSensorData(BaseSensorDataDto data)
+        public async Task<IEnumerable<DoubleSensorDataDto>> GetTemperatureSensorDataAsync()
+        {
+            try
+            {
+                var result = await _sensorRepository.GetAllAsync();
+
+                return result
+                    .Where(x => x.SensorId.Contains("temperature"))
+                    .ToList()
+                    .ConvertAll(x => x.MapToDoubleSensorDataDto())
+                    .Where(x => x is not null)!;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(GetTemperatureSensorDataAsync)} - Error getting temperature sensor data");
+                throw;
+            }
+        }
+
+        public async Task SaveSensorDataAsync(BaseSensorDataDto data)
         {
             try
             {
@@ -43,7 +62,7 @@ namespace Interface
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(SaveSensorData)} - Error saving sensor data");
+                _logger.LogError(ex, $"{nameof(SaveSensorDataAsync)} - Error saving sensor data");
                 throw;
             }
         }

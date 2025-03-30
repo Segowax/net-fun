@@ -22,6 +22,7 @@ public static class RegisterServices
 
         // Explicitly register Queries
         services.AddScoped<IQueryHandler<GetAllSensorData, IEnumerable<BaseSensorDataDto>>, GetAllSensorDataHandler>();
+        services.AddScoped<IQueryHandler<GetTemperatureSensorData, IEnumerable<DoubleSensorDataDto>>, GetTemperatureSensorDataHandler>();
 
         // Explicitly register Commands
         services.AddScoped<ICommandHandler<SaveSensorData>, SaveSensorDataHandler>();

@@ -27,7 +27,7 @@ namespace Application.Commands
         {
             try
             {
-                await _sensorService.SaveSensorData(command.Data);
+                await _sensorService.SaveSensorDataAsync(command.Data);
             }
             catch (Exception ex)
             {
