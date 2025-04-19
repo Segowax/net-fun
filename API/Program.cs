@@ -26,6 +26,12 @@ try
         .AllowAnyOrigin()
         .WithMethods(HttpMethods.Get));
 
+    app.UseDefaultFiles(new DefaultFilesOptions
+    {
+        DefaultFileNames = new List<string> { "index.html" }
+    });
+    app.UseStaticFiles();
+
     app.UseAuthorization();
 
     app.MapControllers();
