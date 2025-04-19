@@ -26,6 +26,9 @@ try
         .AllowAnyOrigin()
         .WithMethods(HttpMethods.Get));
 
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+
     app.UseAuthorization();
 
     app.MapControllers();
