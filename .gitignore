@@ -403,3 +403,9 @@ FodyWeavers.xsd
 /Listener/appsettings.json
 /AzureFunction/Properties/ServiceDependencies/my-wonderful-function-app - Zip Deploy
 /AzureFunction/Properties/serviceDependencies.my-wonderful-function-app - Zip Deploy.json
+
+# SensorHub
+/.project
+/SensorHub/.cproject
+/SensorHub/.project
+/SensorHub/.settings/*
