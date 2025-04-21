@@ -6,7 +6,7 @@
  */
 
 #include "buffer.h"
-#include "rs232.h"
+#include "CommunicationProtocols/rs232.h"
 
 volatile circular_buffer_t buffer_for_door;
 volatile circular_buffer_t buffer_for_temperature;

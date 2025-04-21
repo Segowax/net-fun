@@ -4,11 +4,11 @@
  *  Created on: 17 mar 2025
  *      Author: KosmicznyBandyta
  */
+#include <util/delay.h>
 
 #include "DS18B20.h"
-#include "1wire.h"
 
-#include <util/delay.h>
+#include "../CommunicationProtocols/1wire.h"
 
 uint8_t convert_temperature(uint8_t *scratchpad);
 
@@ -17,29 +17,29 @@ volatile uint8_t temperature_integer_part = 0;
 volatile uint16_t temperature_decimal_part = 0;
 volatile uint8_t current_scratchpad[8];
 
-uint8_t configure_sensor(void) {
+uint8_t configure_sensor(char port, uint8_t pin) {
 	uint8_t rom[8];
 	uint8_t i;
 
-	if (!onewire_reset_presence_procedure()) {
-		onewire_byte_write(READ_ROM);
+	if (!onewire_reset_presence_procedure(port, pin)) {
+		onewire_byte_write(port, pin, READ_ROM);
 		for (i = 0; i < 8; i++) {
-			rom[i] = onewire_byte_read();
+			rom[i] = onewire_byte_read(port, pin);
 		}
-		onewire_byte_write(WRITE_SCRATCHPAD);
+		onewire_byte_write(port, pin, WRITE_SCRATCHPAD);
 		// write TH
-		onewire_byte_write(0b01001011);
+		onewire_byte_write(port, pin, 0b01001011);
 		// write TL
-		onewire_byte_write(0b01000110);
+		onewire_byte_write(port, pin, 0b01000110);
 		// write CONF
 		if (MEASUREMENT_RESOLUTION == 11) {
-			onewire_byte_write(0b01011111);
+			onewire_byte_write(port, pin, BIT9_RESOLUTION);
 		} else if (MEASUREMENT_RESOLUTION == 10) {
-			onewire_byte_write(0b00111111);
+			onewire_byte_write(port, pin, BIT10_RESOLUTION);
 		} else if (MEASUREMENT_RESOLUTION == 9) {
-			onewire_byte_write(0b00011111);
+			onewire_byte_write(port, pin, BIT11_RESOLUTION);
 		} else {
-			onewire_byte_write(0b01111111);
+			onewire_byte_write(port, pin, BIT12_RESOLUTION);
 		}
 	} else {
 		return RESET_PRESENCE_PROCEDURE_ERROR;
@@ -52,10 +52,10 @@ uint8_t configure_sensor(void) {
 	return NO_ERRORS;
 }
 
-uint8_t post_convert_temperature(void) {
-	if (!onewire_reset_presence_procedure()) {
-		onewire_byte_write(SKIP_ROM);
-		onewire_byte_write(CONVERT_T);
+uint8_t post_convert_temperature(char port, uint8_t pin) {
+	if (!onewire_reset_presence_procedure(port, pin)) {
+		onewire_byte_write(port, pin, SKIP_ROM);
+		onewire_byte_write(port, pin, CONVERT_T);
 		_delay_ms(CONVERSION_TIME + 10);
 
 		return NO_ERRORS;
@@ -64,20 +64,20 @@ uint8_t post_convert_temperature(void) {
 	}
 }
 
-uint8_t get_scratchpad(void) {
+uint8_t get_scratchpad(char port, uint8_t pin) {
 	uint8_t scratchpad[8];
 	uint8_t i;
 	uint8_t crc;
 
-	if (!onewire_reset_presence_procedure()) {
-		onewire_byte_write(SKIP_ROM);
-		onewire_byte_write(READ_SCATCHPAD);
+	if (!onewire_reset_presence_procedure(port, pin)) {
+		onewire_byte_write(port, pin, SKIP_ROM);
+		onewire_byte_write(port, pin, READ_SCATCHPAD);
 		for (i = 0; i < 8; i++) {
-			scratchpad[i] = onewire_byte_read();
+			scratchpad[i] = onewire_byte_read(port, pin);
 		}
 
 		// ninth byte CRC
-		crc = onewire_byte_read();
+		crc = onewire_byte_read(port, pin);
 
 		if (crc8(scratchpad, 8) != crc) {
 			return READ_SCRATCHPAD_ERROR;
@@ -97,8 +97,8 @@ uint8_t get_scratchpad(void) {
 	}
 }
 
-uint8_t finish_connection(void) {
-	if (onewire_reset_presence_procedure()) {
+uint8_t finish_connection(char port, uint8_t pin) {
+	if (onewire_reset_presence_procedure(port, pin)) {
 		return RESET_PRESENCE_PROCEDURE_ERROR;
 	}
 

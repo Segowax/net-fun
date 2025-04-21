@@ -10,12 +10,7 @@
 #ifndef CONFIGURATIONS_INPUTS_H_
 #define CONFIGURATIONS_INPUTS_H_
 
-#define SENSOR_PORT_DDR DDRD
-#define SENSOR_PORT_IN PIND
-#define SENSOR_PORT_OUT PORTD
-#define SENSOR_PIN_1 (1 << PD7)
-
-void buttons_init(void);
-bool is_closed(uint8_t  port, uint8_t button);
+void binary_sensors_init(char port, const uint8_t* pins, uint8_t number_of_pins);
+bool is_closed(uint8_t port, uint8_t pin);
 
 #endif /* CONFIGURATIONS_INPUTS_H_ */

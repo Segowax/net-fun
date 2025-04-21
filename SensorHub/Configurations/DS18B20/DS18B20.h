@@ -32,8 +32,13 @@
 #define READ_SCRATCHPAD_ERROR 3
 #define ERROR_DURING_CONVERTING_TEMPERATURE 4
 
-/* Settings */
-#define MEASUREMENT_RESOLUTION 9
+/* Resolution settings */
+#define BIT9_RESOLUTION 0b00111111
+#define BIT10_RESOLUTION 0b01111111
+#define BIT11_RESOLUTION 0b10111111
+#define BIT12_RESOLUTION 0b11111111
+
+#define MEASUREMENT_RESOLUTION 12
 
 #if MEASUREMENT_RESOLUTION == 12
 #define CONVERSION_TIME (750 / 1)
@@ -57,9 +62,9 @@ extern volatile uint8_t temperature_integer_part;
 extern volatile uint16_t temperature_decimal_part;
 extern volatile uint8_t current_scratchpad[8];
 
-uint8_t configure_sensor(void);
-uint8_t post_convert_temperature(void);
-uint8_t get_scratchpad(void);
-uint8_t finish_connection(void);
+uint8_t configure_sensor(char port, uint8_t pin);
+uint8_t post_convert_temperature(char port, uint8_t pin);
+uint8_t get_scratchpad(char port, uint8_t pin);
+uint8_t finish_connection(char port, uint8_t pin);
 
 #endif /* CONFIGURATIONS_DS18B20_DS18B20_H_ */
