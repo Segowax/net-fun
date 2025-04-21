@@ -44,17 +44,7 @@ namespace Listener
             try
             {
                 SerialPort sp = (SerialPort)sender;
-                string data = "";
-
-                while (true)
-                {
-                    string received = sp.ReadExisting();
-                    data += received;
-                    if (data.Contains('@'))
-                    {
-                        break;
-                    }
-                }
+                string data = sp.ReadTo("@");
 
                 Task.Run(() => BufforToSend.rs232Data.TryAdd(Guid.NewGuid().ToString(), data));
             }

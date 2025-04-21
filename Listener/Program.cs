@@ -55,7 +55,7 @@ try
 
     while (!cancellationTokenSource.Token.IsCancellationRequested)
     {
-        Console.WriteLine("Press to l to look up error list, d to delete error list, x to kill and exit.");
+        Console.WriteLine("Press to l to look up error list, x to kill and exit.");
         var button = Console.ReadKey();
         Console.WriteLine();
 
@@ -65,10 +65,6 @@ try
             {
                 Console.WriteLine(data);
             }
-        }
-        else if (button.Key == ConsoleKey.D)
-        {
-            BufforToSend.rs232Data.Error.Values.Clear();
         }
         else if (button.Key == ConsoleKey.X)
         {

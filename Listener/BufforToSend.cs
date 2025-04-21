@@ -17,9 +17,8 @@ namespace Listener
         {
             if (value is not null && value is string valueString)
             {
-                if (valueString.StartsWith('{') && valueString.EndsWith('@'))
+                if (valueString.StartsWith('{') && valueString.EndsWith('}'))
                 {
-                    valueString = valueString.Replace("@", string.Empty);
                     if (Data.TryAdd(key, (TValue)(object)valueString))
                     {
                         OnItemAdded(new KeyValuePair<TKey, TValue>(key, (TValue)(object)valueString));
