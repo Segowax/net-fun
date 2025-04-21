@@ -20,7 +20,7 @@
 #include "Configurations/DS18B20/DS18B20.h"
 #include "Helpers/string-interpolations.h"
 
-void prepare_sensor_value_to_send(char *result);
+void prepare_DS18B20_value_to_send(char *result);
 uint8_t do_DS18B20_measure(char port, uint8_t pin);
 void fill_up_buffer(volatile circular_buffer_t *buffer,
 		const char *PROGMEM sensor_id, const char *PROGMEM sensor_name,
@@ -39,12 +39,12 @@ int main() {
 	circular_buffer_init(&buffer_for_temperature);
 	circular_buffer_init(&buffer_for_door);
 	binary_sensors_init(BINARY_SENSORS_PORT, binary_sensor_pins,
-	NUMBER_OF_DS18B20_SENSORS);
+	NUMBER_OF_BINARY_SENSORS);
 
 	/**** Initial measurment of DS18B20 ****/
 	for (i = 0; i < NUMBER_OF_DS18B20_SENSORS; i++) {
 		if (!do_DS18B20_measure(DS18B20_PORT, ds18b20_pins[i])) {
-			prepare_sensor_value_to_send(DS18B20_sensor_value);
+			prepare_DS18B20_value_to_send(DS18B20_sensor_value);
 			fill_up_buffer(&buffer_for_temperature, temperature_sensor_ids[i],
 					temperature_sensor_name, DS18B20_sensor_value);
 			DS18B20_sensor_value[0] = '\0';
@@ -72,7 +72,7 @@ int main() {
 			if (minute % 5 == 0) {
 				for (i = 0; i < NUMBER_OF_DS18B20_SENSORS; i++) {
 					if (!do_DS18B20_measure(DS18B20_PORT, ds18b20_pins[i])) {
-						prepare_sensor_value_to_send(DS18B20_sensor_value);
+						prepare_DS18B20_value_to_send(DS18B20_sensor_value);
 						fill_up_buffer(&buffer_for_temperature,
 								temperature_sensor_ids[i],
 								temperature_sensor_name, DS18B20_sensor_value);
@@ -84,22 +84,6 @@ int main() {
 			flag = 0;
 		}
 	}
-}
-
-void prepare_sensor_value_to_send(char *result) {
-	char integer[4];
-	char decimal[5];
-
-	itoa(temperature_integer_part, integer, 10);
-	itoa(temperature_decimal_part, decimal, 10);
-	result[0] = temperature_sign;
-	result[1] = '\0';
-	strcat(result, integer);
-	strcat(result, ".");
-	if (temperature_decimal_part < 1000 && temperature_decimal_part != 0)
-		strcat(result, "0625");
-	else
-		strcat(result, decimal);
 }
 
 uint8_t do_DS18B20_measure(char port, uint8_t pin) {
@@ -122,6 +106,22 @@ uint8_t do_DS18B20_measure(char port, uint8_t pin) {
 	}
 
 	return 0;
+}
+
+void prepare_DS18B20_value_to_send(char *result) {
+	char integer[4];
+	char decimal[5];
+
+	itoa(temperature_integer_part, integer, 10);
+	itoa(temperature_decimal_part, decimal, 10);
+	result[0] = temperature_sign;
+	result[1] = '\0';
+	strcat(result, integer);
+	strcat(result, ".");
+	if (temperature_decimal_part < 1000 && temperature_decimal_part != 0)
+		strcat(result, "0625");
+	else
+		strcat(result, decimal);
 }
 
 void fill_up_buffer(volatile circular_buffer_t *buffer,
