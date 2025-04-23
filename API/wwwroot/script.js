@@ -74,28 +74,64 @@ async function fetchTemperatureData() {
         const endDate = new Date(endDateInput.value);
         endDate.setHours(23, 59, 59, 999); // Include the entire end day
 
-        const filteredData = data.filter(entry => {
+        const filteredByDate = data.filter(entry => {
             const entryDate = new Date(entry.enqueuedTime);
             return entryDate >= startDate && entryDate <= endDate;
         });
 
-        // Extract the latest data points
-        const labels = filteredData.map(entry => {
-            const entryDate = new Date(entry.enqueuedTime);
-            return `${entryDate.toLocaleDateString()} ${entryDate.toLocaleTimeString()}`;
+        // Group data by sensorId
+        const groupBySensorId = filteredByDate.reduce((acc, curr) => {
+            const key = curr.sensorId;
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(curr);
+            return acc;
+        }, {});
+
+        // Create a unified timeline (all unique timestamps)
+        const unifiedTimeline = Array.from(
+            new Set(filteredByDate.map(entry => entry.enqueuedTime))
+        ).sort((a, b) => new Date(a) - new Date(b));
+
+        // Generate unique colors for each sensor
+        const colors = [
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(153, 102, 255, 1)'
+        ];
+
+        // Update chart datasets
+        chart.data.datasets = Object.keys(groupBySensorId).map((sensorId, index) => {
+            const sensorData = groupBySensorId[sensorId];
+            const sensorDataMap = sensorData.reduce((acc, entry) => {
+                acc[entry.enqueuedTime] = entry.value;
+                return acc;
+            }, {});
+
+            // Align data to the unified timeline
+            const alignedData = unifiedTimeline.map(timestamp => sensorDataMap[timestamp] || null);
+
+            return {
+                label: `Temperature (°C) - Sensor: ${sensorId}`,
+                data: alignedData,
+                borderColor: colors[index % colors.length],
+                backgroundColor: colors[index % colors.length].replace('1)', '0.2)'),
+                borderWidth: 1,
+                tension: 0.4,
+                spanGaps: true // Enable interpolation of missing data points
+            };
         });
-        const values = filteredData.map(entry => entry.value);
 
-        // Update the chart
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = values;
+        // Update chart labels (unified timeline)
+        chart.data.labels = unifiedTimeline.map(timestamp => {
+            const entryDate = new Date(timestamp);
+            const localDate = new Date(entryDate.getTime() - entryDate.getTimezoneOffset() * 60000); // Convert UTC to local time
 
-        // Update the legend label with sensorId
-        if (data.length > 0 && data[0].sensorId) {
-            chart.data.datasets[0].label = `Temperature (°C) - Sensor: ${data[0].sensorId}`;
-        } else {
-            chart.data.datasets[0].label = 'Temperature (°C) - Sensor: Unknown';
-        }
+            return `${localDate.toLocaleDateString()} ${localDate.toLocaleTimeString()}`;
+        });
 
         chart.update();
     } catch (error) {
