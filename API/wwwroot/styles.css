@@ -20,3 +20,29 @@ canvas {
     border: 1px solid #ccc;
     border-radius: 8px;
 }
+
+#lockStateContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.lock-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: green; /* Default to open */
+}
+
+.lock-icon.open {
+    background-color: green;
+}
+
+.lock-icon.closed {
+    background-color: red;
+}

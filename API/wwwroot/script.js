@@ -1,4 +1,5 @@
 const apiUrl = "https://my-wonderful-api-acgvdvaaa5d4b9ez.northeurope-01.azurewebsites.net/api/sensor/gettemperature";
+const lockStateUrl = "https://my-wonderful-api-acgvdvaaa5d4b9ez.northeurope-01.azurewebsites.net/api/sensor/getcurrentlockstate";
 
 const ctx = document.getElementById('temperatureChart').getContext('2d');
 const chart = new Chart(ctx, {
@@ -148,3 +149,28 @@ window.addEventListener('resize', () => {
 
 startDateInput.addEventListener('change', fetchTemperatureData);
 endDateInput.addEventListener('change', fetchTemperatureData);
+
+const lockStateIcon = document.getElementById('lockStateIcon');
+const lockStateText = document.getElementById('lockStateText');
+
+async function fetchLockState() {
+    try {
+        const response = await fetch(lockStateUrl);
+        const data = await response.json();
+
+        if (data.value === "Open") {
+            lockStateIcon.classList.remove('closed');
+            lockStateIcon.classList.add('open');
+            lockStateText.textContent = "Lock State: Open";
+        } else if (data.value === "Closed") {
+            lockStateIcon.classList.remove('open');
+            lockStateIcon.classList.add('closed');
+            lockStateText.textContent = "Lock State: Closed";
+        }
+    } catch (error) {
+        console.error("Error fetching lock state:", error);
+    }
+}
+
+fetchLockState();
+setInterval(fetchLockState, 60000); // Refresh lock state every 60 seconds

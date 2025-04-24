@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Graph</title>
-    <link rel="stylesheet" href="styles.css?v=1.0.0">
+    <link rel="stylesheet" href="styles.css?v=1.0.1">
 </head>
 <body>
     <h1>Temperature Monitoring</h1>
-    <div>
-        <label for="startDate">Start Date:</label>
-        <input type="date" id="startDate">
-        <label for="endDate">End Date:</label>
-        <input type="date" id="endDate">
+    <div style="display: flex; justify-content: space-around">
+        <div>
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate">
+        </div>
+        <div id="lockStateContainer">
+            <span id="lockStateIcon" class="lock-icon open"></span>
+            <span id="lockStateText">Lock State: Open</span>
+        </div>
     </div>
     <canvas id="temperatureChart"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js?v=1.0.0"></script>
+    <script src="script.js?v=1.0.1"></script>
 </body>
 </html>
