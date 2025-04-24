@@ -6,6 +6,7 @@ namespace Interface
     {
         Task<IEnumerable<BaseSensorDataDto>> GetAllSensorDataAsync();
         Task<IEnumerable<DoubleSensorDataDto>> GetTemperatureSensorDataAsync();
+        Task<StringSensorDataDto?> GetCurrentLockStateAsync();
         Task SaveSensorDataAsync(BaseSensorDataDto data);
     }
 }

@@ -14,7 +14,7 @@ public class Mediator : IMediator
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<TResult> SendAsync<TQuery, TResult>(TQuery query)
+    public async Task<TResult?> SendAsync<TQuery, TResult>(TQuery query)
         where TQuery : IQuery<TResult>
     {
         try

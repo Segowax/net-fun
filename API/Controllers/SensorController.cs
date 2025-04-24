@@ -16,13 +16,13 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllSensorData()
+        [HttpGet("GetCurrentLockState")]
+        public async Task<IActionResult> GetCurrentLockState()
         {
             try
             {
-                var result = await _mediator.SendAsync<GetAllSensorData, IEnumerable<BaseSensorDataDto>>
-                    (new GetAllSensorData());
+                var result = await _mediator.SendAsync<GetCurrenLockSensorsState, StringSensorDataDto>
+                    (new GetCurrenLockSensorsState());
 
                 return Ok(result);
             }

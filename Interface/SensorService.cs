@@ -34,6 +34,21 @@ namespace Interface
             }
         }
 
+        public async Task<StringSensorDataDto?> GetCurrentLockStateAsync()
+        {
+            try
+            {
+                var result = await _sensorRepository.GetCurrentLockStateAsync();
+
+                return result?.MapToStringSensorDataDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(GetCurrentLockStateAsync)} - Error getting current binary sensor state");
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<DoubleSensorDataDto>> GetTemperatureSensorDataAsync()
         {
             try

@@ -5,7 +5,7 @@ namespace Application;
 
 public interface IMediator
 {
-    Task<TResult> SendAsync<TQuery, TResult>(TQuery query)
+    Task<TResult?> SendAsync<TQuery, TResult>(TQuery query)
         where TQuery : IQuery<TResult>;
 
     Task SendAsync<TCommand>(TCommand command)

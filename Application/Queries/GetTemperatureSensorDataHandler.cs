@@ -17,7 +17,7 @@ namespace Application.Queries
             _sensorService = sensorService;
         }
 
-        public async Task<IEnumerable<DoubleSensorDataDto>> HandleAsync(GetTemperatureSensorData query)
+        public async Task<IEnumerable<DoubleSensorDataDto>?> HandleAsync(GetTemperatureSensorData query)
         {
             return await _sensorService.GetTemperatureSensorDataAsync();
         }
