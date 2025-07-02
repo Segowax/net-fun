@@ -14,10 +14,12 @@
 #include "configuration.h"
 #include "Configurations/constants.h"
 #include "Configurations/timer0.h"
+#include "Configurations/timer2.h"
 #include "Configurations/buffer.h"
 #include "Configurations/CommunicationProtocols/rs232.h"
 #include "Configurations/BinarySensors/inputs.h"
 #include "Configurations/DS18B20/DS18B20.h"
+#include "Configurations/LedDisplay/led_display.h"
 #include "Helpers/string-interpolations.h"
 
 void prepare_DS18B20_value_to_send(char *result);
@@ -30,6 +32,7 @@ uint8_t check_binary_sensor(uint8_t current_sensor_value, uint8_t pin,
 
 int main() {
 	usart_init(__UBRR);
+	init_led_display();
 
 	uint8_t i; // Helper variable, can be used anywhere
 	char DS18B20_sensor_value[12];
@@ -48,14 +51,22 @@ int main() {
 			fill_up_buffer(&buffer_for_temperature, temperature_sensor_ids[i],
 					temperature_sensor_name, DS18B20_sensor_value);
 			DS18B20_sensor_value[0] = '\0';
+			// LED DISPLAY
+			if (i == 0)
+				display_number(temperature_integer_part);
 		}
+		//LED DISPLAY - ERROR
+		else if (i == 0)
+			display_error();
 	}
 	/*********************************************/
 
 	// Initialization of timers and interrupts
 	timer0_init();
+	timer2_init();
 	sei();
 
+	//******************* MAIN LOOP **************/
 	while (1) {
 		// Send data if something there
 		circular_buffer_pop(&buffer_for_temperature);
@@ -77,7 +88,15 @@ int main() {
 								temperature_sensor_ids[i],
 								temperature_sensor_name, DS18B20_sensor_value);
 						DS18B20_sensor_value[0] = '\0';
+
+						//LED DISPLAY
+						if (i == 0)
+							display_number(temperature_integer_part);
+
 					}
+					// LED DISPLAY
+					else if (i == 0)
+						display_error();
 				}
 			}
 

@@ -7,6 +7,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include <stdlib.h>
 
 #include "timer0.h"
@@ -21,19 +22,20 @@ void timer0_init() {
 	TIMSK |= (1 << TOIE0); 				// Timer Normal Mode
 
 	// example:
-	// f = 8 000 000 / 262 144 = 30,52 HZ
+	// f = 8 000 000 (F_CPU) / 262 144 = 30,52 HZ
+	// f = 11 059 200 (F_CPU) / 262 144 = 42,18 HZ
 }
 
 ISR(TIMER0_OVF_vect) {
 	static uint8_t interrupt_counter = 0;
 	static uint8_t second = 0;
-	if (++interrupt_counter > 30) {
+	if (++interrupt_counter > CYCLE) {
 		second++;
 		if (second == 60) {
 			minute++;
 			flag = 1;
 			second = 0;
-			if(minute > 60)
+			if (minute > 60)
 				minute = 0;
 		}
 		interrupt_counter = 0;
