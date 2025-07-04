@@ -57,7 +57,7 @@ int main() {
 		}
 		//LED DISPLAY - ERROR
 		else if (i == 0)
-			display_error();
+			display_error(i + 1);
 	}
 	/*********************************************/
 
@@ -96,7 +96,7 @@ int main() {
 					}
 					// LED DISPLAY
 					else if (i == 0)
-						display_error();
+						display_error(i + 1);
 				}
 			}
 

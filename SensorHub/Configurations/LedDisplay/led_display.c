@@ -33,11 +33,11 @@ void display_number(uint16_t number) {
 	send_number_to_led_display(number);
 }
 
-void display_error() {
+void display_error(uint8_t sensor_id) {
 	digit1 = 10;
 	digit2 = 11;
 	digit3 = 11;
-	digit4 = 0;
+	digit4 = sensor_id;
 }
 
 // private zone

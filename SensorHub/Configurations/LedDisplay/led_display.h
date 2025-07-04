@@ -15,10 +15,10 @@
 #define SEGMENT_PORT PORTA
 #define SEGMENT_PORT_LETTER A
 
-#define ANODE_1 (1 << PB0)
-#define ANODE_2 (1 << PB1)
-#define ANODE_3 (1 << PB2)
-#define ANODE_4 (1 << PB3)
+#define ANODE_1 (1 << PB1)
+#define ANODE_2 (1 << PB2)
+#define ANODE_3 (1 << PB3)
+#define ANODE_4 (1 << PB0)
 
 // Common
 #define PORT(x) SPORT(x)
@@ -34,14 +34,14 @@
 #define MY_P(x, y) (P##x##y)
 
 // Macros for each segment
-#define SEG_A 0
-#define SEG_B 1
-#define SEG_C 2
-#define SEG_D 3
-#define SEG_E 4
-#define SEG_F 5
-#define SEG_G 6
-#define SEG_DP 7
+#define SEG_A 2
+#define SEG_B 0
+#define SEG_C 4
+#define SEG_D 6
+#define SEG_E 7
+#define SEG_F 1
+#define SEG_G 3
+#define SEG_DP 5
 
 #define SHOW_SEGMENT_A (1 << P(SEGMENT_PORT_LETTER, SEG_A))
 #define SHOW_SEGMENT_B (1 << P(SEGMENT_PORT_LETTER, SEG_B))
@@ -76,6 +76,6 @@ extern volatile uint8_t lang;
 
 void init_led_display();
 void display_number(uint16_t number);
-void display_error();
+void display_error(uint8_t sensor_id);
 
 #endif /* CONFIGURATIONS_LEDDISPLAY_LED_DISPLAY_H_ */
