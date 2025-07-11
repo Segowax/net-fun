@@ -38,10 +38,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore Listener.sln
+        run: dotnet restore SensorHubListener.sln
 
       - name: Build project
-        run: dotnet build Listener.sln --no-restore --configuration Release
+        run: dotnet build SensorHubListener.sln --no-restore --configuration Release
 
   build_azure_function_solution:
     runs-on: ubuntu-latest
