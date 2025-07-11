@@ -10,10 +10,12 @@ namespace API.Controllers
     public class SensorController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<SensorController> _logger;
 
-        public SensorController(IMediator mediator)
+        public SensorController(IMediator mediator, ILogger<SensorController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpGet("GetCurrentLockState")]
@@ -21,6 +23,7 @@ namespace API.Controllers
         {
             try
             {
+                _logger.LogWarning("GetCurrentLockState called");
                 var result = await _mediator.SendAsync<GetCurrenLockSensorsState, StringSensorDataDto>
                     (new GetCurrenLockSensorsState());
 
@@ -37,6 +40,7 @@ namespace API.Controllers
         {
             try
             {
+                _logger.LogWarning("GetAllTemperatureData called");
                 var result = await _mediator.SendAsync<GetTemperatureSensorData, IEnumerable<DoubleSensorDataDto>>
                     (new GetTemperatureSensorData());
 
