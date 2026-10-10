@@ -1,4 +1,4 @@
-﻿namespace Listener
+﻿namespace Listener.Models
 {
     class BaseSensorDataDto
     {

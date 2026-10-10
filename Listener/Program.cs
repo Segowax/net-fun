@@ -3,7 +3,6 @@ using Listener.Options;
 using Microsoft.Extensions.Configuration;
 
 Rs232? communicationListener = null;
-AzureEventHub? azureEventHub = null;
 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
 try
@@ -17,10 +16,6 @@ try
         .GetSection(Rs232Options.Rs232)
         .Get<Rs232Options>()
         ?? throw new ArgumentNullException($"{nameof(Rs232Options)} are not set.");
-    var eventHubOptions = configuration
-        .GetSection(EventHubOptions.EventHub)
-        .Get<EventHubOptions>()
-        ?? throw new ArgumentNullException($"{nameof(EventHubOptions)} are not set.");
 
     communicationListener = new Rs232(rs232Options);
 
@@ -39,20 +34,6 @@ try
     });
 #pragma warning restore CS4014
 
-    azureEventHub = new AzureEventHub(eventHubOptions);
-    BufforToSend.rs232Data.ItemAdded += async (sender, args) =>
-    {
-        try
-        {
-            await azureEventHub.SendEvent(args.Value);
-            BufforToSend.rs232Data.Remove(args.Key);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during ItemAdded - {ex.Message}");
-        }
-    };
-
     while (!cancellationTokenSource.Token.IsCancellationRequested)
     {
         Console.WriteLine("Press to l to look up error list, x to kill and exit.");
@@ -69,7 +50,6 @@ try
         else if (button.Key == ConsoleKey.X)
         {
             communicationListener.Dispose();
-            await azureEventHub.DisposeAsync();
             break;
         }
     }
@@ -81,8 +61,6 @@ catch (Exception ex)
 finally
 {
     communicationListener?.Dispose();
-    if (azureEventHub != null)
-        await azureEventHub.DisposeAsync();
     Console.WriteLine("Press any key to exit...");
     Console.ReadKey();
 }
