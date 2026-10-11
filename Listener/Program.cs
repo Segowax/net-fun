@@ -1,6 +1,8 @@
 ﻿using Listener;
 using Listener.Options;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 Rs232? communicationListener = null;
 SupabaseDataWriter? supabaseDataWriter = null;
@@ -10,18 +12,24 @@ try
 {
     var builder = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddUserSecrets<Program>(optional: true)
+        .AddEnvironmentVariables();
     IConfiguration configuration = builder.Build();
 
-    var rs232Options = configuration
-        .GetSection(Rs232Options.Rs232)
-        .Get<Rs232Options>()
-            ?? throw new ArgumentNullException($"{nameof(Rs232Options)} are not set.");
+    var services = new ServiceCollection();
+    services.AddOptions<Rs232Options>()
+        .Bind(configuration.GetSection(Rs232Options.Rs232))
+        .Validate(options => !string.IsNullOrWhiteSpace(options.Port), "Rs232:Port is required.")
+        .Validate(options => options.BaudRate > 0, "Rs232:BaudRate must be greater than zero.");
+    services.AddOptions<MySupabaseOptions>()
+        .Bind(configuration.GetSection(MySupabaseOptions.Supabase))
+        .Validate(options => Uri.TryCreate(options.ProjectURL, UriKind.Absolute, out _), "Supabase:ProjectURL must be a valid absolute URL.")
+        .Validate(options => !string.IsNullOrWhiteSpace(options.ApiKey), "Supabase:ApiKey is required.");
 
-    var supabaseOptions = configuration
-        .GetSection(MySupabaseOptions.Supabase)
-        .Get<MySupabaseOptions>()
-            ?? throw new ArgumentNullException($"{nameof(MySupabaseOptions)} are not set.");
+    using var serviceProvider = services.BuildServiceProvider();
+    var rs232Options = serviceProvider.GetRequiredService<IOptions<Rs232Options>>().Value;
+    var supabaseOptions = serviceProvider.GetRequiredService<IOptions<MySupabaseOptions>>().Value;
 
     communicationListener = new Rs232(rs232Options);
     supabaseDataWriter = new SupabaseDataWriter(supabaseOptions);
