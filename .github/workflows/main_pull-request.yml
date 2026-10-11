@@ -7,24 +7,6 @@ on:
       - '**/*'
 
 jobs:
-  build_api_solution:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore API.sln
-
-      - name: Build project
-        run: dotnet build API.sln --no-restore --configuration Release
-
   build_console_solution:
     runs-on: ubuntu-latest
 
@@ -42,21 +24,3 @@ jobs:
 
       - name: Build project
         run: dotnet build Listener.sln --no-restore --configuration Release
-
-  build_azure_function_solution:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore SensorDataReceiver.sln
-
-      - name: Build project
-        run: dotnet build SensorDataReceiver.sln --no-restore --configuration Release
