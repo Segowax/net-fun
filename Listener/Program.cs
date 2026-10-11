@@ -3,7 +3,7 @@ using Listener.Options;
 using Microsoft.Extensions.Configuration;
 
 Rs232? communicationListener = null;
-AzureEventHub? azureEventHub = null;
+SupabaseDataWriter? supabaseDataWriter = null;
 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
 try
@@ -16,13 +16,15 @@ try
     var rs232Options = configuration
         .GetSection(Rs232Options.Rs232)
         .Get<Rs232Options>()
-        ?? throw new ArgumentNullException($"{nameof(Rs232Options)} are not set.");
-    var eventHubOptions = configuration
-        .GetSection(EventHubOptions.EventHub)
-        .Get<EventHubOptions>()
-        ?? throw new ArgumentNullException($"{nameof(EventHubOptions)} are not set.");
+            ?? throw new ArgumentNullException($"{nameof(Rs232Options)} are not set.");
+
+    var supabaseOptions = configuration
+        .GetSection(MySupabaseOptions.Supabase)
+        .Get<MySupabaseOptions>()
+            ?? throw new ArgumentNullException($"{nameof(MySupabaseOptions)} are not set.");
 
     communicationListener = new Rs232(rs232Options);
+    supabaseDataWriter = new SupabaseDataWriter(supabaseOptions);
 
 #pragma warning disable CS4014
     Task.Run(async () =>
@@ -39,23 +41,12 @@ try
     });
 #pragma warning restore CS4014
 
-    azureEventHub = new AzureEventHub(eventHubOptions);
-    BufforToSend.rs232Data.ItemAdded += async (sender, args) =>
-    {
-        try
-        {
-            await azureEventHub.SendEvent(args.Value);
-            BufforToSend.rs232Data.Remove(args.Key);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during ItemAdded - {ex.Message}");
-        }
-    };
+    await supabaseDataWriter.InitializeClient();
+    BufforToSend.rs232Data.ItemAdded += supabaseDataWriter.SensorDataWrite;
 
     while (!cancellationTokenSource.Token.IsCancellationRequested)
     {
-        Console.WriteLine("Press to l to look up error list, x to kill and exit.");
+        Console.WriteLine("Press to l to look up rs232 error list, press s to look up supabase error list, x to kill and exit.");
         var button = Console.ReadKey();
         Console.WriteLine();
 
@@ -66,10 +57,17 @@ try
                 Console.WriteLine(data);
             }
         }
+        else if (button.Key == ConsoleKey.S)
+        {
+            foreach (var data in SupabaseDataWriter.Error.Values)
+            {
+                Console.WriteLine(data);
+            }
+        }
         else if (button.Key == ConsoleKey.X)
         {
             communicationListener.Dispose();
-            await azureEventHub.DisposeAsync();
+            supabaseDataWriter.DisposeClient();
             break;
         }
     }
@@ -81,8 +79,7 @@ catch (Exception ex)
 finally
 {
     communicationListener?.Dispose();
-    if (azureEventHub != null)
-        await azureEventHub.DisposeAsync();
+    supabaseDataWriter?.DisposeClient();
     Console.WriteLine("Press any key to exit...");
     Console.ReadKey();
 }
